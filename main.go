@@ -44,7 +44,7 @@ const (
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "akamai-netstorage"
+	app.Name = "netstorage"
 	app.Usage = "Akamai CLI"
 	app.Version = VERSION
 	app.Copyright = ""
