@@ -6,21 +6,12 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"os/user"
 	"path"
 	"strings"
 
 	netstorage "github.com/akamai/netstoragekit-golang"
 	"github.com/urfave/cli"
 )
-
-func userHome() string {
-	usr, err := user.Current()
-	if err != nil {
-		log.Fatal(err)
-	}
-	return usr.HomeDir
-}
 
 type StatNS struct {
 	XMLName   xml.Name `xml:"stat"`
@@ -170,22 +161,60 @@ func main() {
 			Aliases: []string{"ls"},
 			Usage:   "list remote directory",
 			Action: func(c *cli.Context) error {
-				nsHostname, nsKeyname, nsKey, nsCpcode, nsPath := config(configFile, configSection)
 
-				ns := netstorage.NewNetstorage(nsHostname, nsKeyname, nsKey, true)
-
+				nsPath := ""
 				if c.NArg() > 0 {
 					nsPath = c.Args().Get(0)
 				}
 
-				r, b, e := ns.Dir(fmt.Sprintf("/%s/%s", nsCpcode, nsPath))
-				if e != nil {
-					log.Fatal(e)
+				executeNetstorageDirAction(configFile, configSection, nsPath, "list")
+
+				return nil
+			},
+		},
+		{
+			Name:    "mkdir",
+			Aliases: []string{"md"},
+			Usage:   "Create directory",
+			Action: func(c *cli.Context) error {
+
+				nsPath := ""
+				if c.NArg() > 0 {
+					nsPath = c.Args().Get(0)
 				}
 
-				if r.StatusCode == 200 {
-					fmt.Printf(b)
+				executeNetstorageDirAction(configFile, configSection, nsPath, "mkdir")
+
+				return nil
+			},
+		},
+		{
+			Name:    "rmdir",
+			Aliases: []string{"rm"},
+			Usage:   "Delete directory",
+			Action: func(c *cli.Context) error {
+
+				nsPath := ""
+				if c.NArg() > 0 {
+					nsPath = c.Args().Get(0)
 				}
+
+				executeNetstorageDirAction(configFile, configSection, nsPath, "remove")
+
+				return nil
+			},
+		},
+		{
+			Name:  "du",
+			Usage: "Delete directory",
+			Action: func(c *cli.Context) error {
+
+				nsPath := ""
+				if c.NArg() > 0 {
+					nsPath = c.Args().Get(0)
+				}
+
+				executeNetstorageDirAction(configFile, configSection, nsPath, "du")
 
 				return nil
 			},
