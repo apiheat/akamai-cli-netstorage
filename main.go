@@ -30,7 +30,7 @@ var (
 )
 
 const (
-	VERSION = "0.0.2"
+	VERSION = "0.0.3"
 )
 
 func main() {
@@ -142,6 +142,50 @@ func main() {
 							localDestinationPath := fmt.Sprintf("%s/%s", pathLocal, stat.Files[i].Name)
 							fmt.Printf("\nDownloading from: %s to %s\n", nsTargetPath, localDestinationPath)
 							f, body, err := ns.Download(nsTargetPath, localDestinationPath)
+							if err != nil {
+								fmt.Println("error:", err)
+							}
+
+							if f.StatusCode == 200 {
+								fmt.Printf(body)
+							}
+						}
+					}
+					fmt.Println()
+				}
+				return nil
+			},
+		},
+		{
+			Name:    "erase",
+			Aliases: []string{"e"},
+			Usage:   "Erase directory(delete all files)",
+			Action: func(c *cli.Context) error {
+				nsHostname, nsKeyname, nsKey, nsCpcode, nsPath := config(configFile, configSection)
+
+				ns := netstorage.NewNetstorage(nsHostname, nsKeyname, nsKey, true)
+
+				if c.NArg() > 0 {
+					nsPath = c.Args().Get(0)
+				}
+
+				nsDestination := fmt.Sprintf("/%s/%s", nsCpcode, nsPath)
+				fmt.Printf("Going to erase content of NETSTORAGE%s\n", nsDestination)
+
+				res, body, err := ns.Dir(nsDestination)
+				if err != nil {
+					fmt.Println("error:", err)
+				}
+
+				if res.StatusCode == 200 {
+					var stat StatNS
+					xmlstr := strings.Replace(body, "ISO-8859-1", "UTF-8", -1)
+					xml.Unmarshal([]byte(xmlstr), &stat)
+					for i := range stat.Files {
+						if stat.Files[i].Type == "file" {
+							nsTargetPath := fmt.Sprintf("%s/%s", nsDestination, stat.Files[i].Name)
+							fmt.Printf("\nDeleting from: %s \n", nsTargetPath)
+							f, body, err := ns.Delete(nsTargetPath)
 							if err != nil {
 								fmt.Println("error:", err)
 							}
