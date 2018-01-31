@@ -31,8 +31,9 @@ var (
 	nsHostname, nsKeyname, nsKey, nsCpcode, nsPath string
 )
 
+// VERSION
 const (
-	VERSION = "0.0.5"
+	VERSION = "0.0.6"
 	padding = 3
 )
 
