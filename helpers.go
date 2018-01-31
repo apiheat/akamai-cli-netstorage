@@ -51,11 +51,25 @@ func executeNetstorageDirAction(dirPath, action string) {
 			fmt.Printf(b)
 		}
 	case "list":
-		r, b, e := ns.Dir(location)
-		errorCheck(e)
+		// We need to check if given object is dir or file
+		resSt, bSt, eSt := ns.Stat(location)
+		errorCheck(eSt)
 
-		if r.StatusCode == 200 {
-			printBody(b)
+		if resSt.StatusCode == 200 {
+			var statObj StatNS
+			xmlstr := strings.Replace(bSt, "ISO-8859-1", "UTF-8", -1)
+			xml.Unmarshal([]byte(xmlstr), &statObj)
+
+			if statObj.Files[0].Type == "dir" {
+				r, b, e := ns.Dir(location)
+				errorCheck(e)
+
+				if r.StatusCode == 200 {
+					printBody(b)
+				}
+			} else {
+				printStat(statObj.Files[0])
+			}
 		}
 	case "remove":
 		r, b, e := ns.Rmdir(location)
@@ -105,6 +119,16 @@ func printBody(body string) {
 			fmt.Fprintln(w, fmt.Sprintf("DIR:\t%s\t%s\t%s\t%s", statDir.Files[i].Name, time.Unix(date64, 0), "", ""))
 		}
 	}
+	w.Flush()
+}
+
+func printStat(obj FileNS) {
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, padding, ' ', 0)
+	fmt.Fprintln(w, fmt.Sprint("Type\tName\tMtime\tSize\tMD5"))
+	date64, _ := strconv.ParseInt(obj.Mtime, 10, 64)
+	size64, _ := strconv.ParseUint(obj.Size, 10, 64)
+	size := humanize.Bytes(size64)
+	fmt.Fprintln(w, fmt.Sprintf("File:\t%s\t%s\t%s\t%s", obj.Name, time.Unix(date64, 0), size, obj.MD5))
 	w.Flush()
 }
 

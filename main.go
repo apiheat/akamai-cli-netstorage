@@ -115,6 +115,12 @@ func main() {
 			Action:  cmdErase,
 		},
 		{
+			Name:    "delete",
+			Aliases: []string{"del"},
+			Usage:   "Delete file from `DIRECTORY`",
+			Action:  cmdDelete,
+		},
+		{
 			Name:    "list",
 			Aliases: []string{"ls"},
 			Usage:   "List `DIRECTORY` content in NetStorage",
