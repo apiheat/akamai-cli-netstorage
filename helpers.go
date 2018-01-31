@@ -20,7 +20,6 @@ func verifyPath(c *cli.Context) {
 	if c.NArg() > 0 {
 		argPath := strings.Replace(c.Args().Get(0), nsCpcode, "", -1)
 		nsPath = path.Clean(argPath)
-		log.Println(nsPath)
 	}
 
 	if nsPath == "" {
@@ -91,6 +90,9 @@ func printBody(body string) {
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, padding, ' ', 0)
 
 	fmt.Fprintln(w, fmt.Sprint("Type\tName\tMtime\tSize\tMD5"))
+	if len(statDir.Files) == 0 {
+		fmt.Fprintln(w, fmt.Sprint("..\t..\t-----\t----\t---"))
+	}
 	for i := range statDir.Files {
 		date64, _ := strconv.ParseInt(statDir.Files[i].Mtime, 10, 64)
 		size64, _ := strconv.ParseUint(statDir.Files[i].Size, 10, 64)
