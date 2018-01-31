@@ -21,6 +21,9 @@ type FileNS struct {
 	XMLName xml.Name `xml:"file"`
 	Type    string   `xml:"type,attr"`
 	Name    string   `xml:"name,attr"`
+	Mtime   string   `xml:"mtime,attr"`
+	Size    string   `xml:"size,attr"`
+	MD5     string   `xml:"md5,attr"`
 }
 
 var (
@@ -29,7 +32,8 @@ var (
 )
 
 const (
-	VERSION = "0.0.4"
+	VERSION = "0.0.5"
+	padding = 3
 )
 
 func main() {
