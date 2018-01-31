@@ -22,6 +22,12 @@ func verifyPath(c *cli.Context) {
 	}
 }
 
+func errorCheck(e error) {
+	if e != nil {
+		log.Fatal(e)
+	}
+}
+
 func executeNetstorageDirAction(dirPath, action string) {
 	ns := netstorage.NewNetstorage(nsHostname, nsKeyname, nsKey, true)
 
@@ -34,45 +40,35 @@ func executeNetstorageDirAction(dirPath, action string) {
 	switch action {
 	case "mkdir":
 		r, b, e := ns.Mkdir(location)
-		if e != nil {
-			log.Fatal(e)
-		}
+		errorCheck(e)
 
 		if r.StatusCode == 200 {
 			fmt.Printf(b)
 		}
 	case "list":
 		r, b, e := ns.Dir(location)
-		if e != nil {
-			log.Fatal(e)
-		}
+		errorCheck(e)
 
 		if r.StatusCode == 200 {
 			fmt.Printf(b)
 		}
 	case "remove":
 		r, b, e := ns.Rmdir(location)
-		if e != nil {
-			log.Fatal(e)
-		}
+		errorCheck(e)
 
 		if r.StatusCode == 200 {
 			fmt.Printf(b)
 		}
 	case "du":
 		r, b, e := ns.Du(location)
-		if e != nil {
-			log.Fatal(e)
-		}
+		errorCheck(e)
 
 		if r.StatusCode == 200 {
 			fmt.Printf(b)
 		}
 	default:
 		r, b, e := ns.Dir(location)
-		if e != nil {
-			log.Fatal(e)
-		}
+		errorCheck(e)
 
 		if r.StatusCode == 200 {
 			fmt.Printf(b)

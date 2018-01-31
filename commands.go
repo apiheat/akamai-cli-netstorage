@@ -4,7 +4,6 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"path"
 	"strings"
@@ -50,9 +49,7 @@ func erase(c *cli.Context) error {
 	fmt.Printf("Going to erase content of NETSTORAGE:%s\n", nsDestination)
 
 	res, body, err := ns.Dir(nsDestination)
-	if err != nil {
-		fmt.Println("error:", err)
-	}
+	errorCheck(err)
 
 	if res.StatusCode == 200 {
 		var stat StatNS
@@ -63,9 +60,7 @@ func erase(c *cli.Context) error {
 				nsTargetPath := fmt.Sprintf("%s/%s", nsDestination, stat.Files[i].Name)
 				fmt.Printf("\nDeleting from: %s \n", nsTargetPath)
 				f, body, err := ns.Delete(nsTargetPath)
-				if err != nil {
-					fmt.Println("error:", err)
-				}
+				errorCheck(err)
 
 				if f.StatusCode == 200 {
 					fmt.Printf(body)
@@ -85,9 +80,7 @@ func download(c *cli.Context) error {
 	fmt.Printf("Going to download content of NETSTORAGE%s\n", nsDestination)
 
 	res, body, err := ns.Dir(nsDestination)
-	if err != nil {
-		fmt.Println("error:", err)
-	}
+	errorCheck(err)
 
 	if res.StatusCode == 200 {
 		var stat StatNS
@@ -108,9 +101,7 @@ func download(c *cli.Context) error {
 				localDestinationPath := fmt.Sprintf("%s/%s", pathLocal, stat.Files[i].Name)
 				fmt.Printf("\nDownloading from: %s to %s\n", nsTargetPath, localDestinationPath)
 				f, body, err := ns.Download(nsTargetPath, localDestinationPath)
-				if err != nil {
-					fmt.Println("error:", err)
-				}
+				errorCheck(err)
 
 				if f.StatusCode == 200 {
 					fmt.Printf(body)
@@ -126,29 +117,23 @@ func upload(c *cli.Context) error {
 	ns := netstorage.NewNetstorage(nsHostname, nsKeyname, nsKey, true)
 
 	verifyPath(c)
-	nsDestination := path.Clean(path.Join("/", nsCpcode, nsPath))
+	nsDestination := path.Join("/", nsCpcode, nsPath)
 
 	home, _ := homedir.Dir()
-	targetDir := path.Join(home, nsDestination)
+	targetDir := path.Clean(path.Join(home, nsDestination))
 	if c.String("from-directory") != "" {
 		targetDir = c.String("from-directory")
 	}
 
 	files, err := ioutil.ReadDir(targetDir)
-	if err != nil {
-		log.Fatal(err)
-	}
+	errorCheck(err)
 
 	for _, f := range files {
-		localPath := fmt.Sprintf("%s/%s", targetDir, f.Name())
-		nsTarget := fmt.Sprintf("%s/%s", nsDestination, f.Name())
-		// Remove below and uncomment above
-		//nsTarget := fmt.Sprintf("%s/%s", fmt.Sprintf("/%s/%s", nsCpcode, "test"), f.Name())
+		localPath := path.Clean(fmt.Sprintf("%s/%s", targetDir, f.Name()))
+		nsTarget := path.Clean(fmt.Sprintf("%s/%s", nsDestination, f.Name()))
 		fmt.Printf("\nUploading from: %s to: %s\n", localPath, nsTarget)
 		res, body, err := ns.Upload(localPath, nsTarget)
-		if err != nil {
-			log.Fatal(err)
-		}
+		errorCheck(err)
 
 		if res.StatusCode == 200 {
 			fmt.Printf(body)

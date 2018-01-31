@@ -35,9 +35,9 @@ const (
 func main() {
 	_, inCLI := os.LookupEnv("AKAMAI_CLI")
 
-	appName := "akamai-purge"
+	appName := "akamai-netstorage"
 	if inCLI {
-		appName = "akamai purge"
+		appName = "akamai netstorage"
 	}
 
 	app := cli.NewApp()

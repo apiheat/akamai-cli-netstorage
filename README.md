@@ -29,26 +29,31 @@ The Akamai NetStorage Kit is a set of go libraries that wraps Akamai's {OPEN} AP
 ```shell
 # akamai netstorage
 NAME:
-   netstorage - Akamai CLI
+   akamai-netstorage - A CLI to interact with Akamai NetStorage
 
 USAGE:
    akamai-netstorage [global options] command [command options] [arguments...]
 
 VERSION:
-   0.0.1
+   0.0.4
+
+AUTHORS:
+   Petr Artamonov
+   Rafal Pieniazek
 
 COMMANDS:
-  upload, u    Upload files from directory
-  download, d  add a task to the list
-  list, ls     list remote directory
-  mkdir, md    Create directory
-  rmdir, rm    Delete directory
-  du           Delete directory
-  help, h      Shows a list of commands or help for one command
+     download, d  Download files from `DIRECTORY`
+     du           Show disk usage of `DIRECTORY`
+     erase, e     Erase all files from `DIRECTORY`
+     list, ls     List `DIRECTORY` content in NetStorage
+     mkdir, md    Create `DIRECTORY` recursively
+     rmdir, rm    Delete empty `DIRECTORY`
+     upload, u    Upload files from `DIRECTORY`
+     help, h      Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
-   --section NAME, -s NAME  NAME of section to use from .edgerc (default: "netstorage")
-   --config FILE, -c FILE   Load configuration from FILE (default: ".edgerc")
+   --config FILE, -c FILE   Location of the credentials FILE (default: "/Users/partamonov/.edgerc") [$AKAMAI_EDGERC]
+   --section NAME, -s NAME  NAME of section to use from credentials file (default: "netstorage") [$AKAMAI_EDGERC_NETSTORAGE_SECTION]
    --help, -h               show help
    --version, -v            print the version
 ```

@@ -1,21 +1,15 @@
 package main
 
 import (
-	"log"
-
 	"github.com/go-ini/ini"
 )
 
 func config(configFile, configSection string) {
 	cfg, err := ini.Load(configFile)
-	if err != nil {
-		log.Fatal("error:", err)
-	}
+	errorCheck(err)
 
 	section, err := cfg.GetSection(configSection)
-	if err != nil {
-		log.Fatal("error:", err)
-	}
+	errorCheck(err)
 
 	nsHostname = section.Key("hostname").String()
 	nsKeyname = section.Key("keyname").String()
