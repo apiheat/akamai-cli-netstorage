@@ -118,7 +118,7 @@ func download(c *cli.Context) error {
 
 	verifyPath(c)
 	nsDestination := path.Clean(path.Join("/", nsCpcode, nsPath))
-	fmt.Printf("Going to download content of NETSTORAGE%s\n", nsDestination)
+	fmt.Printf("Going to download content of NETSTORAGE:%s directory\n", nsDestination)
 
 	res, body, err := ns.Dir(nsDestination)
 	errorCheck(err)
