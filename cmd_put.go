@@ -1,12 +1,10 @@
 package main
 
 import (
-	"encoding/xml"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
-	"strings"
 
 	netstorage "github.com/akamai/netstoragekit-golang"
 	homedir "github.com/mitchellh/go-homedir"
@@ -15,46 +13,6 @@ import (
 
 func cmdUpload(c *cli.Context) error {
 	return upload(c)
-}
-
-func cmdDownload(c *cli.Context) error {
-	return download(c)
-}
-
-func download(c *cli.Context) error {
-	ns := netstorage.NewNetstorage(nsHostname, nsKeyname, nsKey, true)
-
-	verifyPath(c)
-	nsDestination := path.Clean(path.Join("/", nsCpcode, nsPath))
-	fmt.Printf("Going to download content of NETSTORAGE:%s directory\n", nsDestination)
-
-	res, body, err := ns.Dir(nsDestination)
-	errorCheck(err)
-
-	if res.StatusCode == 200 {
-		var stat StatNS
-		xmlstr := strings.Replace(body, "ISO-8859-1", "UTF-8", -1)
-		xml.Unmarshal([]byte(xmlstr), &stat)
-		for i := range stat.Files {
-			if stat.Files[i].Type == "file" {
-				home, _ := homedir.Dir()
-				pathLocal := path.Join(home, nsDestination)
-				if c.String("to-directory") != "" {
-					pathLocal = c.String("to-directory")
-				}
-				if _, err := os.Stat(pathLocal); os.IsNotExist(err) {
-					os.MkdirAll(pathLocal, os.ModePerm)
-				}
-
-				nsTargetPath := fmt.Sprintf("%s/%s", nsDestination, stat.Files[i].Name)
-				localDestinationPath := fmt.Sprintf("%s/%s", pathLocal, stat.Files[i].Name)
-				fmt.Printf("\nDownloading from: %s to %s\n", nsTargetPath, localDestinationPath)
-				checkResponseCode(ns.Download(nsTargetPath, localDestinationPath))
-			}
-		}
-		fmt.Println()
-	}
-	return nil
 }
 
 func upload(c *cli.Context) error {

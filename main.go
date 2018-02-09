@@ -110,6 +110,19 @@ func main() {
 			Action: cmdDownload,
 		},
 		{
+			Name:    "get",
+			Aliases: []string{"g"},
+			Usage:   "Download from `OBJECT`",
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "destination",
+					Value: "",
+					Usage: "Download files to `DIRECTORY`",
+				},
+			},
+			Action: cmdGet,
+		},
+		{
 			Name:    "rm",
 			Aliases: []string{"delete"},
 			Usage:   "Delete 'FILE`",
