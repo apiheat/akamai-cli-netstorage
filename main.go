@@ -27,7 +27,7 @@ type FileNS struct {
 }
 
 var (
-	configSection, configFile                      string
+	configSection, configFile, configCpcode        string
 	nsHostname, nsKeyname, nsKey, nsCpcode, nsPath string
 )
 
@@ -72,6 +72,12 @@ func main() {
 			EnvVar:      "AKAMAI_EDGERC_NETSTORAGE_SECTION",
 		},
 		cli.StringFlag{
+			Name:        "cpcode",
+			Value:       "",
+			Usage:       "`CP CODE` to use",
+			Destination: &configCpcode,
+		},
+		cli.StringFlag{
 			Name:        "config, c",
 			Value:       dir,
 			Usage:       "Location of the credentials `FILE`",
@@ -85,10 +91,10 @@ func main() {
 			Name:      "upload",
 			Aliases:   []string{"u"},
 			Usage:     "Upload files from `DIRECTORY`",
-			ArgsUsage: "--from-directory /local/path [DIR]",
+			ArgsUsage: "--from /local/path [DIR]",
 			Flags: []cli.Flag{
 				cli.StringFlag{
-					Name:  "from-directory",
+					Name:  "from",
 					Value: "",
 					Usage: "Upload files from `DIRECTORY`",
 				},
@@ -96,26 +102,13 @@ func main() {
 			Action: cmdUpload,
 		},
 		{
-			Name:      "download",
-			Aliases:   []string{"d"},
-			Usage:     "Download files from `DIRECTORY`",
-			ArgsUsage: "--to-directory /local/path [DIR]",
+			Name:      "get",
+			Aliases:   []string{"g"},
+			Usage:     "Download from `OBJECT`",
+			ArgsUsage: "--to /local/path [OBJECT]",
 			Flags: []cli.Flag{
 				cli.StringFlag{
-					Name:  "to-directory",
-					Value: "",
-					Usage: "Download files to `DIRECTORY`",
-				},
-			},
-			Action: cmdDownload,
-		},
-		{
-			Name:    "get",
-			Aliases: []string{"g"},
-			Usage:   "Download from `OBJECT`",
-			Flags: []cli.Flag{
-				cli.StringFlag{
-					Name:  "destination",
+					Name:  "to",
 					Value: "",
 					Usage: "Download files to `DIRECTORY`",
 				},
@@ -169,6 +162,10 @@ func main() {
 
 	app.Before = func(c *cli.Context) error {
 		config(configFile, configSection)
+
+		if c.String("cpcode") != "" {
+			nsCpcode = c.String("cpcode")
+		}
 
 		return nil
 	}
