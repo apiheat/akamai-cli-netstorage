@@ -116,12 +116,6 @@ func main() {
 			Action:  cmdErase,
 		},
 		{
-			Name:    "delete",
-			Aliases: []string{"del"},
-			Usage:   "Delete file from `DIRECTORY`",
-			Action:  cmdDelete,
-		},
-		{
 			Name:    "list",
 			Aliases: []string{"ls"},
 			Usage:   "List `DIRECTORY` content in NetStorage",
@@ -134,15 +128,26 @@ func main() {
 			Action:  cmdMkdir,
 		},
 		{
-			Name:    "rmdir",
-			Aliases: []string{"rm"},
-			Usage:   "Delete empty `DIRECTORY`",
-			Action:  cmdRm,
+			Name:  "rmdir",
+			Usage: "Delete `DIRECTORY`",
+			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name:  "recursively",
+					Usage: "Delete `DIRECTORY` recursively",
+				},
+			},
+			Action: cmdRm,
 		},
 		{
 			Name:   "du",
 			Usage:  "Show disk usage of `DIRECTORY`",
 			Action: cmdDu,
+		},
+		{
+			Name:    "rm",
+			Aliases: []string{"delete"},
+			Usage:   "Delete 'FILE`",
+			Action:  cmdDelete,
 		},
 	}
 

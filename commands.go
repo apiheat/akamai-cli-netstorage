@@ -26,24 +26,8 @@ func cmdErase(c *cli.Context) error {
 	return erase(c)
 }
 
-func cmdList(c *cli.Context) error {
-	return dirAction("list", c)
-}
-
-func cmdMkdir(c *cli.Context) error {
-	return dirAction("mkdir", c)
-}
-
-func cmdDu(c *cli.Context) error {
-	return dirAction("du", c)
-}
-
-func cmdRm(c *cli.Context) error {
-	return dirAction("remove", c)
-}
-
 func cmdDelete(c *cli.Context) error {
-	return delete(c)
+	return rm(c)
 }
 
 func erase(c *cli.Context) error {
@@ -64,12 +48,7 @@ func erase(c *cli.Context) error {
 			if stat.Files[i].Type == "file" {
 				nsTargetPath := fmt.Sprintf("%s/%s", nsDestination, stat.Files[i].Name)
 				fmt.Printf("\nDeleting from: %s \n", nsTargetPath)
-				f, body, err := ns.Delete(nsTargetPath)
-				errorCheck(err)
-
-				if f.StatusCode == 200 {
-					fmt.Printf(body)
-				}
+				checkResponseCode(ns.Delete(nsTargetPath))
 			}
 		}
 		fmt.Println()
@@ -77,7 +56,7 @@ func erase(c *cli.Context) error {
 	return nil
 }
 
-func delete(c *cli.Context) error {
+func rm(c *cli.Context) error {
 	ns := netstorage.NewNetstorage(nsHostname, nsKeyname, nsKey, true)
 
 	verifyPath(c)
@@ -97,16 +76,11 @@ func delete(c *cli.Context) error {
 		xml.Unmarshal([]byte(xmlstr), &stat)
 
 		if stat.Files[0].Type == "dir" {
-			log.Fatal("For deleting directories please use 'remove' command")
+			log.Fatal("For deleting directories please use 'rmdir' command")
 		}
 		if stat.Files[0].Type == "file" {
 			fmt.Printf("\nDeleting from: %s \n", nsDestination)
-			f, body, err := ns.Delete(nsDestination)
-			errorCheck(err)
-
-			if f.StatusCode == 200 {
-				fmt.Printf(body)
-			}
+			checkResponseCode(ns.Delete(nsDestination))
 		}
 		fmt.Println()
 	}
@@ -141,12 +115,7 @@ func download(c *cli.Context) error {
 				nsTargetPath := fmt.Sprintf("%s/%s", nsDestination, stat.Files[i].Name)
 				localDestinationPath := fmt.Sprintf("%s/%s", pathLocal, stat.Files[i].Name)
 				fmt.Printf("\nDownloading from: %s to %s\n", nsTargetPath, localDestinationPath)
-				f, body, err := ns.Download(nsTargetPath, localDestinationPath)
-				errorCheck(err)
-
-				if f.StatusCode == 200 {
-					fmt.Printf(body)
-				}
+				checkResponseCode(ns.Download(nsTargetPath, localDestinationPath))
 			}
 		}
 		fmt.Println()
@@ -189,12 +158,7 @@ func upload(c *cli.Context) error {
 		localPath := path.Clean(targetDir)
 		nsTarget := path.Clean(fmt.Sprintf("%s/%s", nsDestination, path.Base(targetDir)))
 		fmt.Printf("\nUploading from: %s to: %s\n", localPath, nsTarget)
-		res, body, err := ns.Upload(localPath, nsTarget)
-		errorCheck(err)
-
-		if res.StatusCode == 200 {
-			fmt.Printf(body)
-		}
+		checkResponseCode(ns.Upload(localPath, nsTarget))
 	}
 	return nil
 }

@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"path"
 	"strconv"
@@ -11,7 +12,6 @@ import (
 	"text/tabwriter"
 	"time"
 
-	netstorage "github.com/akamai/netstoragekit-golang"
 	humanize "github.com/dustin/go-humanize"
 	"github.com/urfave/cli"
 )
@@ -33,65 +33,12 @@ func errorCheck(e error) {
 	}
 }
 
-func executeNetstorageDirAction(dirPath, action string) {
-	ns := netstorage.NewNetstorage(nsHostname, nsKeyname, nsKey, true)
-
-	if dirPath != "" {
-		nsPath = dirPath
-	}
-
-	location := path.Clean(path.Join("/", nsCpcode, nsPath))
-
-	switch action {
-	case "mkdir":
-		r, b, e := ns.Mkdir(location)
-		errorCheck(e)
-
-		if r.StatusCode == 200 {
-			fmt.Printf(b)
-		}
-	case "list":
-		// We need to check if given object is dir or file
-		resSt, bSt, eSt := ns.Stat(location)
-		errorCheck(eSt)
-
-		if resSt.StatusCode == 200 {
-			var statObj StatNS
-			xmlstr := strings.Replace(bSt, "ISO-8859-1", "UTF-8", -1)
-			xml.Unmarshal([]byte(xmlstr), &statObj)
-
-			if statObj.Files[0].Type == "dir" {
-				r, b, e := ns.Dir(location)
-				errorCheck(e)
-
-				if r.StatusCode == 200 {
-					printBody(b)
-				}
-			} else {
-				printStat(statObj.Files[0])
-			}
-		}
-	case "remove":
-		r, b, e := ns.Rmdir(location)
-		errorCheck(e)
-
-		if r.StatusCode == 200 {
-			fmt.Printf(b)
-		}
-	case "du":
-		r, b, e := ns.Du(location)
-		errorCheck(e)
-
-		if r.StatusCode == 200 {
-			fmt.Printf(b)
-		}
-	default:
-		r, b, e := ns.Dir(location)
-		errorCheck(e)
-
-		if r.StatusCode == 200 {
-			fmt.Printf(b)
-		}
+func checkResponseCode(response *http.Response, body string, err error) {
+	errorCheck(err)
+	if response.StatusCode == 200 {
+		fmt.Printf(body)
+	} else {
+		fmt.Printf("Something went wrong... Response code is %v", response.StatusCode)
 	}
 }
 
@@ -130,12 +77,4 @@ func printStat(obj FileNS) {
 	size := humanize.Bytes(size64)
 	fmt.Fprintln(w, fmt.Sprintf("File:\t%s\t%s\t%s\t%s", obj.Name, time.Unix(date64, 0), size, obj.MD5))
 	w.Flush()
-}
-
-func dirAction(action string, c *cli.Context) error {
-
-	verifyPath(c)
-	executeNetstorageDirAction(nsPath, action)
-
-	return nil
 }
