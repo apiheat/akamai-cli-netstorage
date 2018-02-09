@@ -21,7 +21,7 @@ func cmdDu(c *cli.Context) error {
 	return dirAction("du", c)
 }
 
-func cmdRm(c *cli.Context) error {
+func cmdRmdir(c *cli.Context) error {
 	return dirAction("rmdir", c)
 }
 

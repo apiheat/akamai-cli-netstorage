@@ -38,7 +38,8 @@ func checkResponseCode(response *http.Response, body string, err error) {
 	if response.StatusCode == 200 {
 		fmt.Printf(body)
 	} else {
-		fmt.Printf("Something went wrong... Response code is %v", response.StatusCode)
+		fmt.Printf("Something went wrong... Response code is %v\n", response.StatusCode)
+		fmt.Printf(body)
 	}
 }
 

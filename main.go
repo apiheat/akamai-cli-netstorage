@@ -110,7 +110,13 @@ func main() {
 			Action: cmdDownload,
 		},
 		{
-			Name:    "erase",
+			Name:    "rm",
+			Aliases: []string{"delete"},
+			Usage:   "Delete 'FILE`",
+			Action:  cmdRm,
+		},
+		{
+			Name:    "empty-directory",
 			Aliases: []string{"e"},
 			Usage:   "Erase all files from `DIRECTORY`",
 			Action:  cmdErase,
@@ -136,18 +142,12 @@ func main() {
 					Usage: "Delete `DIRECTORY` recursively",
 				},
 			},
-			Action: cmdRm,
+			Action: cmdRmdir,
 		},
 		{
 			Name:   "du",
 			Usage:  "Show disk usage of `DIRECTORY`",
 			Action: cmdDu,
-		},
-		{
-			Name:    "rm",
-			Aliases: []string{"delete"},
-			Usage:   "Delete 'FILE`",
-			Action:  cmdDelete,
 		},
 	}
 
