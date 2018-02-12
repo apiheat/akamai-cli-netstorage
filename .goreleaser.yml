@@ -1,15 +1,14 @@
 # .goreleaser.yml
 # Build customization
 builds:
-  - main: main.go
-    binary: akamai-netstorage
-    ldflags: -s -w
-    goos:
-      - windows
-      - darwin
-      - linux
-    goarch:
-      - amd64
+  binary: akamai-netstorage
+  ldflags: -s -w
+  goos:
+    - windows
+    - darwin
+    - linux
+  goarch:
+    - amd64
 archive:
   name_template: "{{ .Binary }}_{{ .Os }}_{{ .Arch }}{{ end }}"
   replacements:
