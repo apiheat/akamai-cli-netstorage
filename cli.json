@@ -5,9 +5,9 @@
   "commands": [
     {
       "name": "netstorage",
-      "version": "0.0.6",
+      "version": "0.0.7",
       "description": "Upload/Download/List Directory in Akamai netstorage",
-      "bin": "https://github.com/partamonov/akamai-cli-netstorage/releases/download/{{.Version}}/akamai-{{.Name}}-{{.OS}}-{{.Arch}}{{.BinSuffix}}"
+      "bin": "https://github.com/partamonov/akamai-cli-netstorage/releases/download/{{.Version}}/akamai-{{.Name}}_{{.OS}}_{{.Arch}}{{.BinSuffix}}"
     }
   ]
 }

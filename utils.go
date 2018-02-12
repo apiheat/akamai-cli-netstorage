@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"path"
 	"strconv"
@@ -11,8 +12,9 @@ import (
 	"text/tabwriter"
 	"time"
 
-	netstorage "github.com/akamai/netstoragekit-golang"
 	humanize "github.com/dustin/go-humanize"
+	"github.com/fatih/color"
+	strip "github.com/grokify/html-strip-tags-go"
 	"github.com/urfave/cli"
 )
 
@@ -23,76 +25,31 @@ func verifyPath(c *cli.Context) {
 	}
 
 	if nsPath == "" {
+		color.Set(color.FgYellow)
 		log.Println("Your path is pointing to root on Netstorage with CPCode: " + nsCpcode)
+		color.Unset()
 	}
 }
 
 func errorCheck(e error) {
 	if e != nil {
+		color.Set(color.FgRed)
 		log.Fatal(e)
+		color.Unset()
 	}
 }
 
-func executeNetstorageDirAction(dirPath, action string) {
-	ns := netstorage.NewNetstorage(nsHostname, nsKeyname, nsKey, true)
-
-	if dirPath != "" {
-		nsPath = dirPath
+func checkResponseCode(response *http.Response, body string, err error) {
+	errorCheck(err)
+	if response.StatusCode == 200 {
+		color.Set(color.FgGreen)
+		fmt.Println(strings.TrimSuffix(strip.StripTags(body), "\n"))
+	} else {
+		color.Set(color.FgRed)
+		fmt.Printf("Something went wrong...\n Response code: %v\n Message: %s\n", response.StatusCode, strings.Replace(body, "\"", "", -1))
+		fmt.Printf("%s\n", body)
 	}
-
-	location := path.Clean(path.Join("/", nsCpcode, nsPath))
-
-	switch action {
-	case "mkdir":
-		r, b, e := ns.Mkdir(location)
-		errorCheck(e)
-
-		if r.StatusCode == 200 {
-			fmt.Printf(b)
-		}
-	case "list":
-		// We need to check if given object is dir or file
-		resSt, bSt, eSt := ns.Stat(location)
-		errorCheck(eSt)
-
-		if resSt.StatusCode == 200 {
-			var statObj StatNS
-			xmlstr := strings.Replace(bSt, "ISO-8859-1", "UTF-8", -1)
-			xml.Unmarshal([]byte(xmlstr), &statObj)
-
-			if statObj.Files[0].Type == "dir" {
-				r, b, e := ns.Dir(location)
-				errorCheck(e)
-
-				if r.StatusCode == 200 {
-					printBody(b)
-				}
-			} else {
-				printStat(statObj.Files[0])
-			}
-		}
-	case "remove":
-		r, b, e := ns.Rmdir(location)
-		errorCheck(e)
-
-		if r.StatusCode == 200 {
-			fmt.Printf(b)
-		}
-	case "du":
-		r, b, e := ns.Du(location)
-		errorCheck(e)
-
-		if r.StatusCode == 200 {
-			fmt.Printf(b)
-		}
-	default:
-		r, b, e := ns.Dir(location)
-		errorCheck(e)
-
-		if r.StatusCode == 200 {
-			fmt.Printf(b)
-		}
-	}
+	color.Unset()
 }
 
 func printBody(body string) {
@@ -130,12 +87,4 @@ func printStat(obj FileNS) {
 	size := humanize.Bytes(size64)
 	fmt.Fprintln(w, fmt.Sprintf("File:\t%s\t%s\t%s\t%s", obj.Name, time.Unix(date64, 0), size, obj.MD5))
 	w.Flush()
-}
-
-func dirAction(action string, c *cli.Context) error {
-
-	verifyPath(c)
-	executeNetstorageDirAction(nsPath, action)
-
-	return nil
 }

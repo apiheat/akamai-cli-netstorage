@@ -5,6 +5,7 @@ import (
 	"os"
 	"sort"
 
+	"github.com/fatih/color"
 	"github.com/mitchellh/go-homedir"
 	"github.com/urfave/cli"
 )
@@ -27,13 +28,14 @@ type FileNS struct {
 }
 
 var (
-	configSection, configFile                      string
+	configSection, configFile, configCpcode        string
 	nsHostname, nsKeyname, nsKey, nsCpcode, nsPath string
+	colorOn                                        bool
 )
 
 // VERSION
 const (
-	VERSION = "0.0.6"
+	VERSION = "0.0.7"
 	padding = 3
 )
 
@@ -72,54 +74,64 @@ func main() {
 			EnvVar:      "AKAMAI_EDGERC_NETSTORAGE_SECTION",
 		},
 		cli.StringFlag{
+			Name:        "cpcode",
+			Value:       "",
+			Usage:       "`CP CODE` to use",
+			Destination: &configCpcode,
+		},
+		cli.StringFlag{
 			Name:        "config, c",
 			Value:       dir,
 			Usage:       "Location of the credentials `FILE`",
 			Destination: &configFile,
 			EnvVar:      "AKAMAI_EDGERC",
 		},
+		cli.BoolFlag{
+			Name:        "no-color",
+			Usage:       "Disable color output",
+			Destination: &colorOn,
+		},
 	}
 
 	app.Commands = []cli.Command{
 		{
-			Name:      "upload",
-			Aliases:   []string{"u"},
+			Name:      "put",
 			Usage:     "Upload files from `DIRECTORY`",
-			ArgsUsage: "--from-directory /local/path [DIR]",
+			ArgsUsage: "--from /local/path [DIR]",
 			Flags: []cli.Flag{
 				cli.StringFlag{
-					Name:  "from-directory",
+					Name:  "from",
 					Value: "",
 					Usage: "Upload files from `DIRECTORY`",
 				},
 			},
-			Action: cmdUpload,
+			Action: cmdPut,
 		},
 		{
-			Name:      "download",
-			Aliases:   []string{"d"},
-			Usage:     "Download files from `DIRECTORY`",
-			ArgsUsage: "--to-directory /local/path [DIR]",
+			Name:      "get",
+			Aliases:   []string{"g"},
+			Usage:     "Download from `OBJECT`",
+			ArgsUsage: "--to /local/path [OBJECT]",
 			Flags: []cli.Flag{
 				cli.StringFlag{
-					Name:  "to-directory",
+					Name:  "to",
 					Value: "",
 					Usage: "Download files to `DIRECTORY`",
 				},
 			},
-			Action: cmdDownload,
+			Action: cmdGet,
 		},
 		{
-			Name:    "erase",
+			Name:    "rm",
+			Aliases: []string{"delete"},
+			Usage:   "Delete 'FILE`",
+			Action:  cmdRm,
+		},
+		{
+			Name:    "empty-directory",
 			Aliases: []string{"e"},
 			Usage:   "Erase all files from `DIRECTORY`",
 			Action:  cmdErase,
-		},
-		{
-			Name:    "delete",
-			Aliases: []string{"del"},
-			Usage:   "Delete file from `DIRECTORY`",
-			Action:  cmdDelete,
 		},
 		{
 			Name:    "list",
@@ -134,10 +146,15 @@ func main() {
 			Action:  cmdMkdir,
 		},
 		{
-			Name:    "rmdir",
-			Aliases: []string{"rm"},
-			Usage:   "Delete empty `DIRECTORY`",
-			Action:  cmdRm,
+			Name:  "rmdir",
+			Usage: "Delete `DIRECTORY`",
+			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name:  "recursively",
+					Usage: "Delete `DIRECTORY` recursively",
+				},
+			},
+			Action: cmdRmdir,
 		},
 		{
 			Name:   "du",
@@ -151,6 +168,14 @@ func main() {
 
 	app.Before = func(c *cli.Context) error {
 		config(configFile, configSection)
+
+		if c.String("cpcode") != "" {
+			nsCpcode = c.String("cpcode")
+		}
+
+		if c.Bool("no-color") {
+			color.NoColor = true
+		}
 
 		return nil
 	}
