@@ -19,7 +19,7 @@ checksum:
   name_template: "{{ .ProjectName }}_{{ .Version }}_checksums.txt"
 release:
   draft: true
-  prerelease: true
+  prerelease: false
   name_template: "{{.ProjectName}}-v{{.Version}}"
 changelog:
   filters:
