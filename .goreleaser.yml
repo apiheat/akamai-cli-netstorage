@@ -11,7 +11,7 @@ builds:
     goarch:
       - amd64
 archive:
-  name_template: "{{ .Binary }}_{{ .Os }}_{{ .Arch }}{{ end }}"
+  name_template: "{{ .Binary }}_{{ .Os }}_{{ .Arch }}"
   replacements:
     darwin: mac
   format: binary
