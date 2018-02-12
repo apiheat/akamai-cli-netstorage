@@ -35,7 +35,7 @@ if [ "$version" == "" ]; then
   exit 1
 else
   # Set version in cli.json
-  jq '.commands[0].version = "$version"' cli.json > tmp_cli.json
+  jq ".commands[0].version = \"$version\"" cli.json > tmp_cli.json
   mv tmp_cli.json cli.json
 
   # Commit cli.json changes
@@ -54,4 +54,5 @@ else
   git push origin v${version}
   # Create release
   echo "goreleaser --rm-dist"
+  goreleaser --rm-dist
 fi
