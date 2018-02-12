@@ -28,6 +28,7 @@ type FileNS struct {
 }
 
 var (
+	version                                        string
 	configSection, configFile, configCpcode        string
 	nsHostname, nsKeyname, nsKey, nsCpcode, nsPath string
 	colorOn                                        bool
@@ -35,7 +36,6 @@ var (
 
 // VERSION
 const (
-	VERSION = "0.0.7"
 	padding = 3
 )
 
@@ -51,7 +51,7 @@ func main() {
 	app.Name = appName
 	app.HelpName = appName
 	app.Usage = "A CLI to interact with Akamai NetStorage"
-	app.Version = VERSION
+	app.Version = version
 	app.Copyright = ""
 	app.Authors = []cli.Author{
 		{

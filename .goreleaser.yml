@@ -3,7 +3,7 @@
 builds:
   -
     binary: akamai-netstorage
-    ldflags: -s -w
+    ldflags: -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
     goos:
       - windows
       - darwin
