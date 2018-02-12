@@ -35,7 +35,7 @@ var (
 
 // VERSION
 const (
-	VERSION = "0.0.6"
+	VERSION = "0.0.7"
 	padding = 3
 )
 
