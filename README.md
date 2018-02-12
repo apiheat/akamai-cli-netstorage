@@ -10,7 +10,7 @@ If you want to compile it from source, you will need Go 1.9 or later, and the [G
 1. Install dependencies using Glide:
    `glide install`
 1. Compile the binary:
-   `go build -ldflags="-s -w" -o akamai-netstorage`
+   `go build -ldflags="-s -w -X main.version={{.Version}}" -o akamai-netstorage`
 
 ### Credentials
 In order to use this configuration, you need to:
@@ -40,24 +40,27 @@ USAGE:
    akamai-netstorage [global options] command [command options] [arguments...]
 
 VERSION:
-   0.0.4
+   X.X.X
 
 AUTHORS:
    Petr Artamonov
    Rafal Pieniazek
 
 COMMANDS:
-     download, d  Download files from `DIRECTORY`
-     du           Show disk usage of `DIRECTORY`
-     erase, e     Erase all files from `DIRECTORY`
-     list, ls     List `DIRECTORY` content in NetStorage
-     mkdir, md    Create `DIRECTORY` recursively
-     rmdir, rm    Delete empty `DIRECTORY`
-     upload, u    Upload files from `DIRECTORY`
-     help, h      Shows a list of commands or help for one command
+     du                  Show disk usage of `DIRECTORY`
+     empty-directory, e  Erase all files from `DIRECTORY`
+     get, g              Download from `OBJECT`
+     list, ls            List `OBJECT` content in NetStorage
+     mkdir, md           Create `DIRECTORY` recursively
+     put                 Upload files from `DIRECTORY`
+     rm, delete          Delete `FILE`
+     rmdir               Delete `DIRECTORY`
+     help, h             Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
    --config FILE, -c FILE   Location of the credentials FILE (default: "/Users/partamonov/.edgerc") [$AKAMAI_EDGERC]
+   --cpcode CP CODE         CP CODE to use
+   --no-color               Disable color output
    --section NAME, -s NAME  NAME of section to use from credentials file (default: "netstorage") [$AKAMAI_EDGERC_NETSTORAGE_SECTION]
    --help, -h               show help
    --version, -v            print the version

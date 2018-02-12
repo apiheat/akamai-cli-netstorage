@@ -124,7 +124,7 @@ func main() {
 		{
 			Name:    "rm",
 			Aliases: []string{"delete"},
-			Usage:   "Delete 'FILE`",
+			Usage:   "Delete `FILE`",
 			Action:  cmdRm,
 		},
 		{
@@ -136,7 +136,7 @@ func main() {
 		{
 			Name:    "list",
 			Aliases: []string{"ls"},
-			Usage:   "List `DIRECTORY` content in NetStorage",
+			Usage:   "List `OBJECT` content in NetStorage",
 			Action:  cmdList,
 		},
 		{
