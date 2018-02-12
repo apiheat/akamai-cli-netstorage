@@ -13,6 +13,8 @@ import (
 	"time"
 
 	humanize "github.com/dustin/go-humanize"
+	"github.com/fatih/color"
+	strip "github.com/grokify/html-strip-tags-go"
 	"github.com/urfave/cli"
 )
 
@@ -23,24 +25,31 @@ func verifyPath(c *cli.Context) {
 	}
 
 	if nsPath == "" {
+		color.Set(color.FgYellow)
 		log.Println("Your path is pointing to root on Netstorage with CPCode: " + nsCpcode)
+		color.Unset()
 	}
 }
 
 func errorCheck(e error) {
 	if e != nil {
+		color.Set(color.FgRed)
 		log.Fatal(e)
+		color.Unset()
 	}
 }
 
 func checkResponseCode(response *http.Response, body string, err error) {
 	errorCheck(err)
 	if response.StatusCode == 200 {
-		fmt.Printf("%s\n", body)
+		color.Set(color.FgGreen)
+		fmt.Println(strings.TrimSuffix(strip.StripTags(body), "\n"))
 	} else {
-		fmt.Printf("Something went wrong... Response code is %v\n", response.StatusCode)
+		color.Set(color.FgRed)
+		fmt.Printf("Something went wrong...\n Response code: %v\n Message: %s\n", response.StatusCode, strings.Replace(body, "\"", "", -1))
 		fmt.Printf("%s\n", body)
 	}
+	color.Unset()
 }
 
 func printBody(body string) {

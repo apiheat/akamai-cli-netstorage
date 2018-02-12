@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	netstorage "github.com/akamai/netstoragekit-golang"
+	"github.com/fatih/color"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/urfave/cli"
 )
@@ -54,11 +55,15 @@ func get(c *cli.Context) error {
 			// Download given file
 			getFile(ns, location, pathLocal, "")
 		case "link":
+			color.Set(color.FgYellow)
 			fmt.Printf("You are trying to download link NETSTORAGE:%s link\n", location)
 			fmt.Printf("Please download original file or directory\n")
+			color.Unset()
 		}
 	} else {
+		color.Set(color.FgRed)
 		fmt.Printf("Something went wrong...\n Response code: %v\n Message: %s\n", resStat.StatusCode, strings.Replace(bStat, "\"", "", -1))
+		color.Unset()
 	}
 	return nil
 }

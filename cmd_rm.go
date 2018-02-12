@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	netstorage "github.com/akamai/netstoragekit-golang"
+	"github.com/fatih/color"
 	"github.com/urfave/cli"
 )
 
@@ -21,7 +22,9 @@ func rm(c *cli.Context) error {
 	verifyPath(c)
 	// For now disable deletion in root of CPCode
 	if nsPath == "" {
+		color.Set(color.FgRed)
 		log.Fatal("Path cannot be empty")
+		color.Unset()
 	}
 	nsDestination := path.Clean(path.Join("/", nsCpcode, nsPath))
 	fmt.Printf("Going to delete object in NETSTORAGE:%s\n", nsDestination)
@@ -35,7 +38,9 @@ func rm(c *cli.Context) error {
 		xml.Unmarshal([]byte(xmlstr), &stat)
 
 		if stat.Files[0].Type == "dir" {
+			color.Set(color.FgYellow)
 			log.Fatal("For deleting directories please use 'rmdir' command")
+			color.Unset()
 		}
 		if stat.Files[0].Type == "file" {
 			fmt.Printf("\nDeleting from: %s \n", nsDestination)

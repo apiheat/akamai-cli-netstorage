@@ -88,8 +88,7 @@ func main() {
 
 	app.Commands = []cli.Command{
 		{
-			Name:      "upload",
-			Aliases:   []string{"u"},
+			Name:      "put",
 			Usage:     "Upload files from `DIRECTORY`",
 			ArgsUsage: "--from /local/path [DIR]",
 			Flags: []cli.Flag{
@@ -99,7 +98,7 @@ func main() {
 					Usage: "Upload files from `DIRECTORY`",
 				},
 			},
-			Action: cmdUpload,
+			Action: cmdPut,
 		},
 		{
 			Name:      "get",
