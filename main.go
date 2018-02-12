@@ -5,6 +5,7 @@ import (
 	"os"
 	"sort"
 
+	"github.com/fatih/color"
 	"github.com/mitchellh/go-homedir"
 	"github.com/urfave/cli"
 )
@@ -29,6 +30,7 @@ type FileNS struct {
 var (
 	configSection, configFile, configCpcode        string
 	nsHostname, nsKeyname, nsKey, nsCpcode, nsPath string
+	colorOn                                        bool
 )
 
 // VERSION
@@ -83,6 +85,11 @@ func main() {
 			Usage:       "Location of the credentials `FILE`",
 			Destination: &configFile,
 			EnvVar:      "AKAMAI_EDGERC",
+		},
+		cli.BoolFlag{
+			Name:        "no-color",
+			Usage:       "Disable color output",
+			Destination: &colorOn,
 		},
 	}
 
@@ -164,6 +171,10 @@ func main() {
 
 		if c.String("cpcode") != "" {
 			nsCpcode = c.String("cpcode")
+		}
+
+		if c.Bool("no-color") {
+			color.NoColor = true
 		}
 
 		return nil
