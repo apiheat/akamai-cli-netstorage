@@ -28,10 +28,10 @@ type FileNS struct {
 }
 
 var (
-	version                                        string
-	configSection, configFile, configCpcode        string
-	nsHostname, nsKeyname, nsKey, nsCpcode, nsPath string
-	colorOn                                        bool
+	version                                          string
+	configSection, configFile, configCpcode, appName string
+	nsHostname, nsKeyname, nsKey, nsCpcode, nsPath   string
+	colorOn                                          bool
 )
 
 // VERSION

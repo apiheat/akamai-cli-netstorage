@@ -18,6 +18,7 @@ func cmdGet(c *cli.Context) error {
 }
 
 func get(c *cli.Context) error {
+	verifyCreds()
 	ns := netstorage.NewNetstorage(nsHostname, nsKeyname, nsKey, true)
 	verifyPath(c)
 	location := path.Clean(path.Join("/", nsCpcode, nsPath))

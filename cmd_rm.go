@@ -17,6 +17,7 @@ func cmdRm(c *cli.Context) error {
 }
 
 func rm(c *cli.Context) error {
+	verifyCreds()
 	ns := netstorage.NewNetstorage(nsHostname, nsKeyname, nsKey, true)
 
 	verifyPath(c)

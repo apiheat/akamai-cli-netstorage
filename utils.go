@@ -18,6 +18,14 @@ import (
 	"github.com/urfave/cli"
 )
 
+func verifyCreds() {
+	if nsHostname == "" && nsKeyname == "" && nsKey == "" {
+		color.Set(color.FgRed)
+		log.Fatal("Check you configuration file section. It might miss one of required fields")
+		color.Unset()
+	}
+}
+
 func verifyPath(c *cli.Context) {
 	if c.NArg() > 0 {
 		argPath := strings.Replace(c.Args().Get(0), nsCpcode, "", -1)

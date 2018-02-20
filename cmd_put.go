@@ -18,6 +18,7 @@ func cmdPut(c *cli.Context) error {
 }
 
 func put(c *cli.Context) error {
+	verifyCreds()
 	ns := netstorage.NewNetstorage(nsHostname, nsKeyname, nsKey, true)
 
 	verifyPath(c)

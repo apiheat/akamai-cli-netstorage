@@ -15,6 +15,7 @@ func cmdErase(c *cli.Context) error {
 }
 
 func erase(c *cli.Context) error {
+	verifyCreds()
 	ns := netstorage.NewNetstorage(nsHostname, nsKeyname, nsKey, true)
 
 	verifyPath(c)

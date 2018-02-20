@@ -36,6 +36,7 @@ func dirAction(action string, c *cli.Context) error {
 	return nil
 }
 func executeNetstorageDirAction(dirPath, action string, recursive bool) {
+	verifyCreds()
 	ns := netstorage.NewNetstorage(nsHostname, nsKeyname, nsKey, true)
 
 	if dirPath != "" {
