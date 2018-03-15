@@ -55,7 +55,6 @@ func checkResponseCode(response *http.Response, body string, err error) {
 	} else {
 		color.Set(color.FgRed)
 		fmt.Printf("Something went wrong...\n Response code: %v\n Message: %s\n", response.StatusCode, strings.Replace(body, "\"", "", -1))
-		fmt.Printf("%s\n", body)
 	}
 	color.Unset()
 }

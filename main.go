@@ -27,6 +27,20 @@ type FileNS struct {
 	MD5     string   `xml:"md5,attr"`
 }
 
+// duNS output structure for du command
+type duNS struct {
+	XMLName   xml.Name `xml:"du"`
+	Directory string   `xml:"directory,attr"`
+	Info      duInfoNS `xml:"du-info"`
+}
+
+// duInfoNS output structure for DU info
+type duInfoNS struct {
+	XMLName xml.Name `xml:"du-info"`
+	Files   string   `xml:"files,attr"`
+	Bytes   string   `xml:"bytes,attr"`
+}
+
 var (
 	version                                          string
 	configSection, configFile, configCpcode, appName string
@@ -130,7 +144,7 @@ func main() {
 		{
 			Name:    "empty-directory",
 			Aliases: []string{"e"},
-			Usage:   "Erase all files from `DIRECTORY`",
+			Usage:   "Erase all files from `DIRECTORY`, non empty directories inside target `DIRECTORY` will be ignored",
 			Action:  cmdErase,
 		},
 		{

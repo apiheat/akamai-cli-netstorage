@@ -2,10 +2,16 @@ package main
 
 import (
 	"encoding/xml"
+	"fmt"
+	"os"
 	"path"
+	"strconv"
 	"strings"
+	"text/tabwriter"
 
 	netstorage "github.com/akamai/netstoragekit-golang"
+	humanize "github.com/dustin/go-humanize"
+	"github.com/fatih/color"
 	"github.com/urfave/cli"
 )
 
@@ -77,8 +83,44 @@ func executeNetstorageDirAction(dirPath, action string, recursive bool) {
 			checkResponseCode(ns.Rmdir(location))
 		}
 	case "du":
-		checkResponseCode(ns.Du(location))
+		// We need to check if given object is dir or file
+		resSt, bSt, eSt := ns.Stat(location)
+		errorCheck(eSt)
+
+		if resSt.StatusCode == 200 {
+			var statObj StatNS
+			xmlstr := strings.Replace(bSt, "ISO-8859-1", "UTF-8", -1)
+			xml.Unmarshal([]byte(xmlstr), &statObj)
+
+			if statObj.Files[0].Type == "dir" {
+				duDir(location, ns)
+			} else {
+				printStat(statObj.Files[0])
+			}
+		}
 	default:
 		checkResponseCode(ns.Dir(location))
+	}
+}
+
+func duDir(location string, ns *netstorage.Netstorage) {
+	resDU, bDU, eDU := ns.Du(location)
+	errorCheck(eDU)
+
+	if resDU.StatusCode == 200 {
+		var duObj duNS
+		xmlstr := strings.Replace(bDU, "ISO-8859-1", "UTF-8", -1)
+		xml.Unmarshal([]byte(xmlstr), &duObj)
+
+		w := tabwriter.NewWriter(os.Stdout, 0, 0, padding, ' ', 0)
+		fmt.Fprintln(w, fmt.Sprint("# Directory\tFiles\tSize"))
+		size64, _ := strconv.ParseUint(duObj.Info.Bytes, 10, 64)
+		size := humanize.Bytes(size64)
+		fmt.Fprintln(w, fmt.Sprintf("%s\t%s\t%s", duObj.Directory, duObj.Info.Files, size))
+		w.Flush()
+	} else {
+		color.Set(color.FgRed)
+		fmt.Printf("Something went wrong...\n Response code: %v\n Message: %s\n", resDU.StatusCode, strings.Replace(bDU, "\"", "", -1))
+		color.Unset()
 	}
 }

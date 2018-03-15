@@ -30,7 +30,7 @@ path = /some/path or ""
 ## Overview
 The Akamai NetStorage Kit is a set of go libraries that wraps Akamai's {OPEN} APIs to help simplify common netstorage tasks.
 
-## Usage
+## Main Usage command
 ```shell
 # akamai netstorage
 NAME:
@@ -48,7 +48,7 @@ AUTHORS:
 
 COMMANDS:
      du                  Show disk usage of `DIRECTORY`
-     empty-directory, e  Erase all files from `DIRECTORY`
+     empty-directory, e  Erase all files from `DIRECTORY`, non empty directories inside target `DIRECTORY` will be ignored
      get, g              Download from `OBJECT`
      list, ls            List `OBJECT` content in NetStorage
      mkdir, md           Create `DIRECTORY` recursively
@@ -65,3 +65,79 @@ GLOBAL OPTIONS:
    --help, -h               show help
    --version, -v            print the version
 ```
+
+### DU command
+
+If you will DU not directory, then the output will be `ls`
+```shell
+> akamai netstorage du /test
+# Directory               Files   Size
+/<CPCODE>/test            10      4.3 MB
+```
+
+```shell
+> akamai netstorage du /test/icons.png
+Type    Name        Mtime                           Size     MD5
+File:   icons.png   2018-02-12 10:59:30 +0100 CET   3.4 kB   055531dc54f773403865a704e0bdae21
+```
+
+### Empty-directory command
+
+Purpose of this command is to delete all files and empty directories inside target `DIRECTORY`. This is a safety measure to prevent deletion of unexpected content.
+If you want true recursive behaviour than open support case for Akamai to enable Quick Deletion for required CP Code.
+Use `akamai netstorage rmdir --recursively [PATH]` command.
+
+```shell
+> akamai netstorage empty-directory test/super/tttt
+```
+
+### Get command
+```shell
+> akamai-netstorage get [command options] --to /local/path [OBJECT]
+```
+
+Purpose of this command is to download `OBJECT` from NetStorage.
+If given `OBJECT` is directory, then all files will be downloaded. Directories inside target path won't be touched.
+
+If you have such structure:
+- dir1
+  - dir2
+    - file2
+  - dir3
+  - file1
+
+Then if you will run `akamai netstorage get dir1`, file1 will be downloaded to `~/<CPCODE>/dir1`.
+
+To set local path for download, please use `--to` option
+
+### List command
+
+Purpose of this command is to list directory content or object information
+
+```shell
+> akamai netstorage ls
+Directory: /225406
+Type   Name      Mtime                            Size   MD5
+DIR:   test     2016-07-28 11:41:38 +0200 CEST
+DIR:   test2    2018-01-31 07:05:58 +0100 CET
+```
+
+### Mkdir command
+
+Purpose of this command is to create directories in Netstorage
+
+### Put command
+
+Purpose of this command is to put `OBJECT` to Netstorage. You can upload all files from given directory, if you will specify directory as source.
+
+```shell
+> akamai netstorage put --from /tmp/www /CPCODE/test
+```
+
+### Rm command
+
+Purpose of this command is to delete `File` in Netstorage
+
+### Rmdir command
+
+Purpose of this command is to delete `Directory` in Netstorage
