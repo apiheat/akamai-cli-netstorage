@@ -7,6 +7,8 @@ import (
 	"strings"
 
 	netstorage "github.com/akamai/netstoragekit-golang"
+	"github.com/fatih/color"
+	strip "github.com/grokify/html-strip-tags-go"
 	"github.com/urfave/cli"
 )
 
@@ -35,7 +37,26 @@ func erase(c *cli.Context) error {
 			if stat.Files[i].Type == "file" {
 				checkResponseCode(ns.Delete(nsTargetPath))
 			} else if stat.Files[i].Type == "dir" {
-				checkResponseCode(ns.Rmdir(nsTargetPath))
+				// Check if directory is not empty, only one level down.
+				// Keeping that as safe measure, if you want to delete recursive, please enable QuickDeletion for account
+				// You need to raise support ticket
+				r, b, e := ns.Rmdir(nsTargetPath)
+				errorCheck(e)
+
+				switch r.StatusCode {
+				case 200:
+					color.Set(color.FgGreen)
+					fmt.Println(strings.TrimSuffix(strip.StripTags(b), "\n"))
+				case 409:
+					color.Set(color.FgYellow)
+					fmt.Printf("Not empty directory %s will be skipped\n", nsTargetPath)
+					fmt.Println("... if you want to be able to recursively delete, then open support case for Akamai and request:")
+					fmt.Println("    NetStorage QuickDelete option, than use 'akamai netstorage rmdir --recursively [PATH]'")
+				default:
+					color.Set(color.FgRed)
+					fmt.Printf("Something went wrong...\n Response code: %v\n Message: %s\n", r.StatusCode, strings.Replace(b, "\"", "", -1))
+				}
+				color.Unset()
 			}
 		}
 		fmt.Println()
