@@ -58,6 +58,6 @@ else
   echo "git push origin v${version}"
   git push origin v${version}
   # Create release
-  echo "goreleaser --rm-dist"
-  goreleaser --rm-dist
+  echo "goreleaser --clean"
+  goreleaser --clean
 fi
