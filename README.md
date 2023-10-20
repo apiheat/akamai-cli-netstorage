@@ -4,9 +4,9 @@
 ### Local Install, if you choose not to use the akamai package manager
 If you want to compile it from source, you will need Go 1.9 or later, and the [Glide](https://glide.sh) package manager installed:
 1. Fetch the package:
-   `go get https://github.com/partamonov/akamai-cli-netstorage`
+   `go get https://github.com/EdgeTribe/akamai-cli-netstorage`
 1. Change to the package directory:
-   `cd $GOPATH/src/github.com/partamonov/akamai-cli-netstorage`
+   `cd $GOPATH/src/github.com/EdgeTribe/akamai-cli-netstorage`
 1. Install dependencies using Glide:
    `glide install`
 1. Compile the binary:

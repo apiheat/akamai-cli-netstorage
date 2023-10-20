@@ -1,13 +1,13 @@
 {
   "requirements": {
-    "go": "1.9.2"
+    "go": "1.21.3"
   },
   "commands": [
     {
       "name": "netstorage",
-      "version": "0.0.16",
+      "version": "0.0.20",
       "description": "Upload/Download/List Directory in Akamai netstorage",
-      "bin": "https://github.com/partamonov/akamai-cli-netstorage/releases/download/v{{.Version}}/akamai-{{.Name}}_{{.OS}}_{{.Arch}}{{.BinSuffix}}"
+      "bin": "https://github.com/EdgeTribe/akamai-cli-netstorage/releases/download/v{{.Version}}/akamai-{{.Name}}_{{.OS}}_{{.Arch}}{{.BinSuffix}}"
     }
   ]
 }
