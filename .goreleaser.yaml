@@ -11,7 +11,8 @@ before:
     - go mod tidy
 
 builds:
-  - env:
+  - binary: akamai-netstorage
+    env:
       - CGO_ENABLED=0
     goos:
       - linux
