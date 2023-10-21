@@ -7,7 +7,7 @@
       "name": "netstorage",
       "version": "0.0.20",
       "description": "Upload/Download/List Directory in Akamai netstorage",
-      "bin": "https://github.com/EdgeTribe/akamai-cli-netstorage/releases/download/v{{.Version}}/akamai-{{.Name}}_{{.OS}}_{{.Arch}}{{.BinSuffix}}"
+      "bin": "https://github.com/EdgeTribe/akamai-cli-netstorage/releases/download/v{{.Version}}/akamai-cli-{{.Name}}_{{.OS}}_{{.Arch}}{{.BinSuffix}}"
     }
   ]
 }

@@ -17,7 +17,6 @@ builds:
       - linux
       - windows
       - darwin
-    id: akamai-netstorage
 
 archives:
   - format: binary
