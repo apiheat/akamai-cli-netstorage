@@ -11,14 +11,13 @@ before:
     - go mod tidy
 
 builds:
-    binary: 
-      - akamai-netstorage
-    env:
+  - env:
       - CGO_ENABLED=0
     goos:
       - linux
       - windows
       - darwin
+    binary: akamai-netstorage
 
 archives:
   - format: binary
